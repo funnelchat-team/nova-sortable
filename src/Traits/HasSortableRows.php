@@ -108,6 +108,10 @@ trait HasSortableRows
 
                 if (empty($request->get('orderBy')) && $shouldSort) {
                     $query->getQuery()->orders = [];
+                    if (!$request->user()->hasRole('admin')) {
+                        $query->where('user_id', $request->user()->id)->orderBy($sortability->model->determineOrderColumnName());
+                        return $query;
+                    }
                     return $query->orderBy($sortability->model->determineOrderColumnName());
                 }
             }
